@@ -20,7 +20,7 @@ const int LATE_BUTTON_PIN = 5;
 const int USER_TIME_OUT_SECONDS = 60; // Length of time for ignoring scooping motion.
 int maximumNumberTwosAllowed = 1;
 int averageMotionSeconds = 30; // Starting point for average time spent in the litter box.
-bool isDebugEnabled = false;
+boolean isDebugEnabled = false;
 
 // System motion tracking variables
 const int MOTION_MONITOR_TIMEOUT = 90;
@@ -57,7 +57,6 @@ boolean timeOneHour = false;
 boolean timeOneDay = false;
 boolean timeOneWeek = false;
 boolean timeOneFrame = false;
-const int HALF_SECOND_MILLISECONDS = 500;
 // *********************SIMPLE TIME****************************
 
 void setup() {
@@ -387,15 +386,11 @@ void motionTimeoutUpdater() {
 // Private values used to calculate and trigger the boolean time values.
 byte timePrivate_halfSeconds = 0;
 byte timePrivate_seconds = 0;
-int timePrivate_minutes = 0;
-long timePrivate_hours = 0;
-long timePrivate_days = 1;
-unsigned long timePrivate_elapsedCycleTime;
+byte timePrivate_minutes = 0;
+byte timePrivate_hours = 0;
+byte timePrivate_days = 1;
 unsigned long timePrivate_runningTime;
 unsigned long timePrivate_lastHalfSecondRunTime;
-unsigned long timePrivate_currentLastRunTime;
-unsigned long timePrivate_syncTime = 0;
-int timePrivate_secondCnt = 0;
 long timePrivate_cyclesPerSecond = 0;
 long timePrivate_avgCyclesPerSecond = FRAMES_PER_SECOND;
 long timePrivate_cycleFrameCount = 0;
@@ -403,10 +398,11 @@ int timePrivate_avgCyclesPerFrame = 100;
 int timePrivate_frameCountCheck = 0;
 int timePrivate_frameCountTest = FRAMES_PER_SECOND;
 int timePrivate_halfSecondMsTrigger = 500; // New half second value with an offset from the original 500 ms value.
+const int HALF_SECOND_MILLISECONDS = 500;
 
 // Sets boolean time values to represent the time.
 //
-long timePrivenowRunTimeRemainder = 0;
+long timePrivate_nowRunTimeRemainder = 0;
 int hsTrigger = HALF_SECOND_MILLISECONDS;
 void time_advanceTimeValues() {
   timePrivate_runningTime = millis();
@@ -423,8 +419,8 @@ void time_advanceTimeValues() {
   timeOneWeek = false;
 
   // Add back the carry-over remainder for syncing.
-  nowRunTime += timePrivenowRunTimeRemainder;
-  timePrivenowRunTimeRemainder = 0; // Reset.
+  nowRunTime += timePrivate_nowRunTimeRemainder;
+  timePrivate_nowRunTimeRemainder = 0; // Reset.
 
   int addHalfSeconds = 0;
   while (nowRunTime >= hsTrigger) {
@@ -434,7 +430,7 @@ void time_advanceTimeValues() {
 
   // Carry-over the remainder to next time for syncing.
   if (nowRunTime > 0) {
-    timePrivenowRunTimeRemainder = nowRunTime;
+    timePrivate_nowRunTimeRemainder = nowRunTime;
   }
 
   // Increment and set the time booleans
@@ -493,7 +489,7 @@ void time_advanceTimeValues() {
     timePrivate_frameCountCheck = 0;
   }
 
-  // Frames per half second. (NOTE: approximate
+  // Frames per half second. (NOTE: approximate)
   timePrivate_cycleFrameCount++;
   if (timePrivate_cycleFrameCount >= timePrivate_avgCyclesPerFrame) {
     timeOneFrame = true;
