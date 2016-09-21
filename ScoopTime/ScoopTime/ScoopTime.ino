@@ -47,7 +47,7 @@ boolean motionTimedOut = false;
 
 // *********************SIMPLE TIME****************************
 // You may set the frame rate per second if needed
-const int FRAMES_PER_SECOND = 32;
+const int FRAMES_PER_SECOND = 16;
 
 // Do not override these values in your program.
 boolean timeHalfSecond = false;
@@ -211,7 +211,8 @@ void runCurrentState() {
 // Solid red = button pressed confirming it was time to scoop
 // Solid yellow = button pressed showing scooping was not yet needed
 // Solid green = PIR motion detected
-// Flashing green = Motion stopped but waiting for additional motion before a timeout
+// Slow flashing green = Motion stopped
+// Fast flashing green = Waiting to see if additional motion happens before a timeout
 // Flashing red continuously = error
 
 // Update the LEDs based on the current state
