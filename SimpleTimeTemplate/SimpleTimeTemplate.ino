@@ -22,9 +22,9 @@
 
 /////////////COPY BELOW////////////////////
 
-// *********************SIMPLE TIME****************************
+// *********************SIMPLE TIME TEMPLATE ****************************
 // You may set the frame rate per second if needed
-const int FRAMES_PER_SECOND = 32;
+const int FRAMES_PER_SECOND = 16;
 
 // Do not override these values in your program.
 boolean timeHalfSecond = false;
@@ -34,7 +34,7 @@ boolean timeOneHour = false;
 boolean timeOneDay = false;
 boolean timeOneWeek = false;
 boolean timeOneFrame = false;
-const int HALF_SECOND_MILLISECONDS = 500;
+// *********************SIMPLE TIME TEMPLATE ****************************
 
 ///////////////COPY ABOVE////////////////////////////
 
@@ -61,19 +61,16 @@ void loop() {
 // I recommend placing this code at the bottom of your code so that it is out of the way.
 /////////////COPY BELOW////////////////////
 
-// *********************SIMPLE TIME****************************
+
+// *********************SIMPLE TIME TEMPLATE ****************************
 // Private values used to calculate and trigger the boolean time values.
 byte timePrivate_halfSeconds = 0;
 byte timePrivate_seconds = 0;
-int timePrivate_minutes = 0;
-long timePrivate_hours = 0;
-long timePrivate_days = 1;
-unsigned long timePrivate_elapsedCycleTime;
+byte timePrivate_minutes = 0;
+byte timePrivate_hours = 0;
+byte timePrivate_days = 1;
 unsigned long timePrivate_runningTime;
 unsigned long timePrivate_lastHalfSecondRunTime;
-unsigned long timePrivate_currentLastRunTime;
-unsigned long timePrivate_syncTime = 0;
-int timePrivate_secondCnt = 0;
 long timePrivate_cyclesPerSecond = 0;
 long timePrivate_avgCyclesPerSecond = FRAMES_PER_SECOND;
 long timePrivate_cycleFrameCount = 0;
@@ -81,10 +78,11 @@ int timePrivate_avgCyclesPerFrame = 100;
 int timePrivate_frameCountCheck = 0;
 int timePrivate_frameCountTest = FRAMES_PER_SECOND;
 int timePrivate_halfSecondMsTrigger = 500; // New half second value with an offset from the original 500 ms value.
+const int HALF_SECOND_MILLISECONDS = 500;
 
 // Sets boolean time values to represent the time.
 //
-long timePrivenowRunTimeRemainder = 0;
+long timePrivate_nowRunTimeRemainder = 0;
 int hsTrigger = HALF_SECOND_MILLISECONDS;
 void time_advanceTimeValues() {
   timePrivate_runningTime = millis();
@@ -101,8 +99,8 @@ void time_advanceTimeValues() {
   timeOneWeek = false;
 
   // Add back the carry-over remainder for syncing.
-  nowRunTime += timePrivenowRunTimeRemainder;
-  timePrivenowRunTimeRemainder = 0; // Reset.
+  nowRunTime += timePrivate_nowRunTimeRemainder;
+  timePrivate_nowRunTimeRemainder = 0; // Reset.
 
   int addHalfSeconds = 0;
   while (nowRunTime >= hsTrigger) {
@@ -112,7 +110,7 @@ void time_advanceTimeValues() {
 
   // Carry-over the remainder to next time for syncing.
   if (nowRunTime > 0) {
-    timePrivenowRunTimeRemainder = nowRunTime;
+    timePrivate_nowRunTimeRemainder = nowRunTime;
   }
 
   // Increment and set the time booleans
@@ -171,7 +169,7 @@ void time_advanceTimeValues() {
     timePrivate_frameCountCheck = 0;
   }
 
-  // Frames per half second. (NOTE: approximate
+  // Frames per half second. (NOTE: approximate)
   timePrivate_cycleFrameCount++;
   if (timePrivate_cycleFrameCount >= timePrivate_avgCyclesPerFrame) {
     timeOneFrame = true;
@@ -179,6 +177,7 @@ void time_advanceTimeValues() {
     timePrivate_frameCountCheck++;
   }
 }
+// *********************SIMPLE TIME TEMPLATE ****************************
 
 ///////////////COPY ABOVE////////////////////////////
 
@@ -212,7 +211,7 @@ void testMinute() {
         // Verify one minute milliseconds passed
         getTestResultLongHold(60000, nowTestTime, testName, "one minute ms");
         // Test complete
-        run_testMinute = false;
+        run_testMinute = 60000 != nowTestTime; // Run again if failing
       }
       else {
         Serial.println("TEST STILL RUNNING: One Minute elapsed time check");
@@ -240,12 +239,12 @@ void testFrameRate() {
       // Verify frame rate check
       getTestResultLongHold(FRAMES_PER_SECOND, timePrivate_frameCountTest, testName, "frame rate check");
       // Test completed
-      run_testFrameRate = false;
+      run_testFrameRate = FRAMES_PER_SECOND != timePrivate_frameCountTest; // Run again if failing
     }
   }
 }
 
-// Helper print the test results
+// Helpers to print the test results
 void getTestResultLongHold(long expectedValue, long resultValue, String testName, String subTestName) {
   Serial.println("---------------");
   delay(10);
